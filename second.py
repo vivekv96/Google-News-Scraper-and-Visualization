@@ -1,12 +1,7 @@
-import time
 import urllib
 import urllib.request
-from urllib.request import urlopen
 import re
 from http.cookiejar import CookieJar
-import http.cookiejar
-import datetime
-import pprint
 
 cj = CookieJar()
 opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(cj))
