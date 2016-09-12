@@ -1,19 +1,24 @@
-var width=750, height=500;
-  var fill = d3.scale.category20();
-
-  d3.layout.cloud().size([width, height])
-      .words([
-        "Hello", "world", "normally", "you", "want", "more", "words",
-        "than", "this"].map(function(d) {
-        return {text: d, size: 10 + Math.random() * 90};
-      }))
-      .padding(5)
+var width=850, height=600;
+var leaderScale = d3.scale.linear().range([10,60]);
+var fill = d3.scale.category20();
+d3.tsv("output.tsv", function(data) {
+  var leaders = data
+    .filter(function(d) { return +d.freq > 0; })
+    .map(function(d) { return { text: d.word, size: +d.freq}; })
+    .sort(function(a,b) { return d3.descending(a.size, b.size); })
+    //.slice(0,100);
+  leaderScale
+    .domain([d3.min(leaders,function(d) { return d.size;}),
+             d3.max(leaders,function(d){return d.size})]);
+d3.layout.cloud().size([width, height])
+      .words(leaders)
+      .padding(0)
       .rotate(function() { return ~~(Math.random() * 2) * 90; })
       .font("Impact")
-      .fontSize(function(d) { return d.size; })
+      .fontSize(function(d) { return leaderScale(d.size); })
       .on("end", draw)
       .start();
-
+});
   function draw(words) {
     d3.select("#word-cloud").append("svg")
         .attr("width", width)
